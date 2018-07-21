@@ -1,4 +1,6 @@
 from collections import namedtuple
+from datetime import timedelta
+from dateutil import parser
 
 from KBaseSearchEngine.KBaseSearchEngineClient import KBaseSearchEngine
 from Workspace.WorkspaceClient import Workspace
@@ -72,7 +74,7 @@ class RefUtils:
         last_time = ""
         chunk = 0
         list_params = {'workspaces': [workspace], 'type': 'KBaseGenomes.Genome-9', 'after': after,
-                       'before': before, 'limit': 100, 'includeMetadata': 1}
+                       'before': before, 'limit': 1000, 'includeMetadata': 1}
         infos = ws.list_objects(list_params)
         while infos:
             print(len(infos))
@@ -83,19 +85,20 @@ class RefUtils:
                     continue
                 corrected_taxa = self.retrieve_taxon("ReferenceTaxons", info[-1]['Name'])
                 curr_ref = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
-                data = ws.get_objects2({'objects': [{'ref': curr_ref}]})['data'][0]['data']
-                data.update(corrected_taxa._asdict())
-                print(corrected_taxa)
                 try:
+                    data = ws.get_objects2({'objects': [{'ref': curr_ref}]})['data'][0]['data']
+                    data.update(corrected_taxa._asdict())
                     ws.save_objects({'workspace': workspace, 'objects': [
                         {'type': 'KBaseGenomes.Genome', 'data': data, 'objid': info[0]}]})
+                    print(curr_ref, corrected_taxa)
                     events["fixed"] += 1
                 except:
                     print('Failed to save: {}'.format(curr_ref))
                     events["error"] += 1
+            list_params['after'] = (parser.parse(last_time) + timedelta(seconds=1)).strftime('%Y-%m-%dT%H:%M:%S+0000')
             infos = ws.list_objects(list_params)
             chunk += 1
-            print("finished chunk {}".format(chunk))
+            print("Finished chunk {}. Though {}".format(chunk, last_time))
         print(events)
         print(last_time)
         return {"events": events, "last_timepoint_processed": last_time}
