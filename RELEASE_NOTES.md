@@ -1,0 +1,6 @@
+# reference_data_update release notes
+=========================================
+
+0.0.0
+-----
+* Module created by kb-sdk init
