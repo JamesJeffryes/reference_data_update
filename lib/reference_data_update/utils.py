@@ -17,7 +17,7 @@ class RefUtils:
 
         """
         TaxTuple = namedtuple("TaxTuple",
-                              ['taxonomy', 'taxon_reference', 'domain', 'genetic_code'])
+                              ['taxonomy', 'taxon_ref', 'domain', 'genetic_code'])
         default = TaxTuple('Unconfirmed Organism: ' + scientific_name,
                            'ReferenceTaxons/unknown_taxon', 'Unknown', 11)
 
