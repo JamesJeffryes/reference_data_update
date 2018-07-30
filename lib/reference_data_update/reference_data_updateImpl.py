@@ -21,8 +21,8 @@ class reference_data_update:
     # the latter method is running.
     ######################################### noqa
     VERSION = "0.0.1"
-    GIT_URL = ""
-    GIT_COMMIT_HASH = ""
+    GIT_URL = "https://github.com/JamesJeffryes/reference_data_update.git"
+    GIT_COMMIT_HASH = "32c2e6869e1561d9a7a7f328efad730cf94d912b"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER

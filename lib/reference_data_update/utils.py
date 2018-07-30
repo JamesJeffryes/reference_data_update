@@ -60,7 +60,7 @@ class RefUtils:
 
     def fix_taxonomy(self, params):
         workspace = params['target_workspace']
-        bad_word = params['bad_word']
+        bad_word = params.get('bad_word')
         after = params['after']
         before = params['before']
         ws = self.ws
@@ -80,13 +80,14 @@ class RefUtils:
             print(len(infos))
             for info in infos:
                 last_time = info[3]
-                if bad_word not in info[-1]['Taxonomy']:
+                if bad_word and bad_word not in info[-1]['Taxonomy']:
                     events["ok"] += 1
                     continue
                 corrected_taxa = self.retrieve_taxon("ReferenceTaxons", info[-1]['Name'])
                 curr_ref = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
                 try:
                     data = ws.get_objects2({'objects': [{'ref': curr_ref}]})['data'][0]['data']
+                    data.pop('taxon_reference', None)
                     data.update(corrected_taxa._asdict())
                     ws.save_objects({'workspace': workspace, 'objects': [
                         {'type': 'KBaseGenomes.Genome', 'data': data, 'objid': info[0]}]})
